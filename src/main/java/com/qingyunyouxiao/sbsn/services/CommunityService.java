@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.qingyunyouxiao.sbsn.dto.ImageDto;
 import com.qingyunyouxiao.sbsn.dto.MessageDto;
@@ -17,8 +18,15 @@ public class CommunityService {
     }
 
     public List<ImageDto> getCommunityImages(int page) {
-        return Arrays.asList(new ImageDto(1L, "First message", null),
-            new MessageDto(2L, "Second message"));
+        return Arrays.asList(new ImageDto(1L, "First Title", null),
+            new ImageDto(2L, "Second message", null));
     }
 
+    public MessageDto postMessage(MessageDto messageDto) {
+        return new MessageDto(3L, "New message");
+    }
+
+    public ImageDto postImage(MultipartFile file, String title) {
+        return new ImageDto(3L, "New Title", null);
+    }
 }

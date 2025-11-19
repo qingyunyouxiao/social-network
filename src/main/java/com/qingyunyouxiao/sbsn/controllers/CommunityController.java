@@ -1,32 +1,54 @@
 package com.qingyunyouxiao.sbsn.controllers;
 
+import java.net.URI;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.qingyunyouxiao.sbsn.dtos.ProfileDto;
-import com.qingyunyouxiao.sbsn.services.UserService;
+import com.qingyunyouxiao.sbsn.dto.MessageDto;
+import com.qingyunyouxiao.sbsn.dto.ImageDto;
+import com.qingyunyouxiao.sbsn.services.CommunityService;
 
+@RestController
+@RequestMapping("/v1/community")
 public class CommunityController {
-    private final UserService userService;
 
-    public CommunityController(UserService userService) {
-        this.userService = userService;
+    private final CommunityService communityService;
+
+    public CommunityController(CommunityService communityService) {
+        this.communityService = communityService;
     }
 
-    @GetMapping("/{userId}/profile")
-    public ResponseEntity<ProfileDto> getUserProfile(@PathVariable int userId) {
-        return ResponseEntity.ok(userService.getProfile(userId));
+    @GetMapping("/messages")
+    public ResponseEntity<List<MessageDto>> getCommunityMessages(
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+        return ResponseEntity.ok(communityService.getCommunityMessages(page));
     }
 
-    @PostMapping("/friends/friendId")
-    public ResponseEntity<Void> addFriends(@PathVariable Long friendId) {
-        return ();
+    @GetMapping("/images")
+    public ResponseEntity<List<ImageDto>> getCommunityImages(
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+        return ResponseEntity.ok(communityService.getCommunityImages(page));
     }
 
-    @PostMapping
-    public ResponseEntity<> searchUsers(@RequestParam()) {
-        return ResponseEntity.ok(userService.getProfile(userId));
+    @PostMapping("/messages")
+    public ResponseEntity<MessageDto> postMessage(@RequestBody MessageDto messageDto) {
+        return ResponseEntity.created(URI.create("/v1/community/messages"))
+                .body(communityService.postMessage(messageDto));
+    }
+
+    @PostMapping("/images")
+    public ResponseEntity<ImageDto> postImage(@RequestParam MultipartFile file,
+                                              @RequestParam(value = "title") String title) {
+        return ResponseEntity.created(URI.create("/v1/community/images"))
+                .body(communityService.postImage(file, title));
     }
 }

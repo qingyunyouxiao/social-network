@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qingyunyouxiao.sbsn.dto.ProfileDto;
+import com.qingyunyouxiao.sbsn.dto.UserSummaryDto;
 import com.qingyunyouxiao.sbsn.services.UserService;
 
 @RestController
@@ -30,13 +31,13 @@ public class UserController {
     }
 
     @PostMapping("/friends/friendId")
-    public ResponseEntity<Void> addFriends(@PathVariable Long friendId) {
-        userService.addFriends(friendId);
-        return ();
+    public ResponseEntity<Void> addFriend(@PathVariable Long friendId) {
+        userService.addFriend(friendId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping
-    public ResponseEntity<> searchUsers(@RequestParam()) {
-        return ResponseEntity.ok(userService.getProfile(userId));
+    public ResponseEntity<List<UserSummaryDto>> searchUsers(@RequestParam(value = "term") String term) {
+        return ResponseEntity.ok(userService.searchUsers(term));
     }
 }
