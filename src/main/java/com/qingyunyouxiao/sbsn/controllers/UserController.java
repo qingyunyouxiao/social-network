@@ -16,7 +16,7 @@ import com.qingyunyouxiao.sbsn.dto.UserSummaryDto;
 import com.qingyunyouxiao.sbsn.services.UserService;
 
 @RestController
-@RequestMapping("/v1/uers")
+@RequestMapping("/v1/users")
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +30,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getProfile(userId));
     }
 
-    @PostMapping("/friends/friendId")
+    @PostMapping("/friends/{friendId}")
     public ResponseEntity<Void> addFriend(@PathVariable Long friendId) {
         userService.addFriend(friendId);
         return ResponseEntity.noContent().build();
