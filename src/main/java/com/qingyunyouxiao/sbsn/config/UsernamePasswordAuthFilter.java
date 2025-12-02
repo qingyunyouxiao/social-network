@@ -1,14 +1,13 @@
-```java
-package com.sergio.socialnetwork.config;
+package com.qingyunyouxiao.sbsn.config;
 
 import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import com.qingyunyouxiao.sbsn.dto.CredentialsDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sergio.socialnetwork.dto.CredentialsDto;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class UsernamePasswordAuthFilter extends OncePerRequestFilter {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
+    
     private final UserAuthenticationProvider userAuthenticationProvider;
 
     public UsernamePasswordAuthFilter(UserAuthenticationProvider userAuthenticationProvider) {
@@ -25,59 +24,22 @@ public class UsernamePasswordAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse,
+            HttpServletRequest httpServletRequest, 
+            HttpServletResponse httpServletResponse,   
             FilterChain filterChain) throws ServletException, IOException {
-
-        if ("/v1/signIn".equals(httpServletRequest.getServletPath())
+           
+        if ("v1/signIn".equals(httpServletRequest.getServletPath())
                 && HttpMethod.POST.matches(httpServletRequest.getMethod())) {
             CredentialsDto credentialsDto = MAPPER.readValue(httpServletRequest.getInputStream(), CredentialsDto.class);
 
             try {
                 SecurityContextHolder.getContext().setAuthentication(
-                        userAuthenticationProvider.validateCredentials(credentialsDto));
+                    userAuthenticationProvider.validateCredentials(credentialsDto));
             } catch (RuntimeException e) {
                 SecurityContextHolder.clearContext();
                 throw e;
-            }
-        }
-
+            }       
+        } 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }
-```
-
-```java
-package com.sergio.socialnetwork.dto;
-
-public class CredentialsDto {
-
-    private String login;
-    private char[] password;
-
-    public CredentialsDto() {
-        super();
-    }
-
-    public CredentialsDto(String login, char[] password) {
-        this.login = login;
-        this.password = password;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public char[] getPassword() {
-        return password;
-    }
-
-    public void setPassword(char[] password) {
-        this.password = password;
-    }
-}
-```
