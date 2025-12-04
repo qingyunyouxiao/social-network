@@ -6,8 +6,9 @@ import com.qingyunyouxiao.sbsn.services.AuthenticationService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureAlgorithm;
 
+import java.security.Key;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -22,9 +23,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserAuthenticationProvider {
 
-    @Value("${security.jwt.token.secre-key:secret-key}")
+    @Value("${security.jwt.token.secret-key:secret-key}")
     private String secretKey;
 
+    private Key signingKey;
+    
     private final AuthenticationService authenticationService;
 
     public UserAuthenticationProvider(AuthenticationService authenticationService) {
@@ -41,9 +44,9 @@ public class UserAuthenticationProvider {
         Claims claims = Jwts.claims().setSubject(login);
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 3600000); // 1 hour
+        Date validity = new Date(now.getTime() + 3600 * 1000); // 1 hour
 
-        return JwtBuilder()
+        return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
@@ -51,16 +54,16 @@ public class UserAuthenticationProvider {
                 .compact();
     }
 
-    public Authentication vaildateToken(String token) {
+    public Authentication validateToken(String token) {
         String login = Jwts.parser()
                 .setSigningKey(secretKey)
-                .parseClaimsJws(token)
+                 .parseSignedClaims(token)
                 .getBody()
                 .getSubject();
 
         UserDto user = authenticationService.findByLogin(login);
 
-        return new UsernamePasswordAuthenticationToken(user, null, Collection.emptyList());
+        return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
     }
 
     public Authentication validateCredentials(CredentialsDto credentialsDto) {

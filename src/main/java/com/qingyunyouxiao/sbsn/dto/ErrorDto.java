@@ -1,5 +1,4 @@
-```java
-package com.sergio.socialnetwork.dto;
+package com.qingyunyouxiao.sbsn.dto;
 
 public class ErrorDto {
 
@@ -9,7 +8,7 @@ public class ErrorDto {
         super();
     }
 
-    public ErrorDto(String message) {
+    public ErrorDto (String message) {
         this.message = message;
     }
 
@@ -21,5 +20,3 @@ public class ErrorDto {
         this.message = message;
     }
 }
-
-```
