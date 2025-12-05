@@ -36,8 +36,8 @@ public class UserAuthenticationProvider {
 
     @PostConstruct
     protected void init() {
-        // this is to avoid having the raw secret key available in the JVM
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+	byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+	this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String createToken(String login) {
@@ -50,7 +50,7 @@ public class UserAuthenticationProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(secretKey，SignatureAlgorithm.HS256)
                 .compact();
     }
 
