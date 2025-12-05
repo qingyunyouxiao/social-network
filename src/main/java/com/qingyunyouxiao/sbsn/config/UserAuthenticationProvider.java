@@ -57,7 +57,7 @@ public class UserAuthenticationProvider {
     public Authentication validateToken(String token) {
         String login = Jwts.parser()
                 .setSigningKey(secretKey)
-                 .parseSignedClaims(token)
+                .parseSignedClaims(token)
                 .getBody()
                 .getSubject();
 
